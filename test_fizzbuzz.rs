@@ -1,7 +1,13 @@
 //rustc --pretty expanded test_fizzbuzz.rs
 //rustc test_fizzbuzz.rs && ./test_fizzbuzz
+//rustc test_fizzbuzz.rs -O --test && ./test_fizzbuzz --bench
 
 #![feature(macro_rules)]
+extern crate test;
+
+use test::Bencher;
+
+
 macro_rules! fizzbuzz(
     ($n:ident $(($d:expr, $str:expr)).+ ) => (
         {
@@ -49,3 +55,27 @@ fn main() {
     // }
 
 }
+
+#[bench]
+fn bench_fizzbuzz(b: &mut Bencher) {
+    let mut l = range(1i , 101);//10_001);
+    // b.iter(|| l.map(fizzbuzz));
+    // let tmpString = "".to_string();
+    b.iter(|| {
+        // let x = l.map(fizzbuzz);
+        // l.fold("".to_string(), |_, new| fizzbuzz(new));
+        test::black_box({for i in l { fizzbuzz(i) }});
+    });
+}
+
+// #[bench]
+// fn bench_range(b: &mut Bencher) {
+//     b.iter(|| v.iter().fold(0, |old, new| old + *new));
+// }
+
+
+// #[bench]
+// fn bench_sum_1024_ints(b: &mut Bencher) {
+//     let v = Vec::from_fn(1024, |n| n);
+//     b.iter(|| v.iter().fold(0, |old, new| old + *new));
+// }
